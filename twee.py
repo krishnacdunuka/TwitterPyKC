@@ -1,34 +1,29 @@
 import tweepy as tw
-import webbrowser as wb
 
-# Storing key inputs from user
-consumer_key = input('Cosumer key: ').strip()
-consumer_secret = input('Consumer secret key: ').strip()
+#keys are stored in a local file keys.py
+from keys import *
 
 # Authorizing the Application to your account
 auth = tw.OAuthHandler(consumer_key, consumer_secret)
 
-wb.open(auth.get_authorization_url())
-pin = input('Authorization PIN: ')
-access_token, access_token_secret = auth.get_access_token(verifier = pin)
-
 auth.set_access_token(access_token, access_token_secret)
+
 api = tw.API(auth)
 
 # Your Home Timeline:
 def home():
     print('Home Timeline:')
     for tweet in tw.Cursor(api.home_timeline).items(10):
-        print('TweetID:', tweet.id, tweet.text)
+        print(tweet.text)
+
+def search(q):
+    for tweet in tw.Cursor(api.search, q=q).items(5):
+        print(tweet.text)
 
 # Retweet
 def retweet(id):
     api.retweet(id=id)
     print('Tweet retweeted!')
-
-# Unretweet
-def unretweet(id):
-
 
 # Tweet
 def update(status):
@@ -60,13 +55,4 @@ def followers():
     for follower in tw.Cursor(api.followers).items():
         print(follower.name)
 
-if __name__ == '__main__':
-    while(True):
-        action = input('Enter your query: ')
-        if action == 'update': update(input('What\'s happening?\n'))
-        elif action == 'home': home()
-        elif action == 'retweet': retweet(input('Tweet ID: '))
-        elif action == 'delete': delete()
-        elif action == 'following': following()
-        elif action == 'followers': followers()
-        else: break
+#Put function calls here to get your results
